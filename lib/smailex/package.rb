@@ -3,7 +3,7 @@ module Smailex
   class Package
     include Smailex::Error
 
-    def self.create(type, params)
+    def self.create(type, params=false)
       self.check_type(type)
       if params
         packages_array = params.map{|single_package|
@@ -37,7 +37,7 @@ module Smailex
       }
     end
 
-    #check dimensions type is not nil
+    #check units type is not nil
     def self.check_units(dimensions)
       units = dimensions[:units]
       if units.nil? && !units.is_a?(String) && !['imperial', 'metric'].include?(units)

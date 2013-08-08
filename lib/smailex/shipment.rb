@@ -7,8 +7,10 @@ module Smailex
 		include Smailex::Error
 		include Smailex::Config
 
-		def self.create(type,params={})			
-			packages = Smailex::Package.create(type,params[:packages])
+		def self.create(type,params={})
+			if type == "box"
+				packages = Smailex::Package.create(type,params[:packages])
+			end
 
 			sender_party, receiver_party = nil
 
@@ -25,11 +27,15 @@ module Smailex
 			request_body = {
 				:shipment => {
 					:package_type => type,
-					:packages => packages,
 					:sender=> sender_party,
 					:receiver => receiver_party
 				}
 			}	
+
+			if type == "box"
+				request_body[:shipment][:packages] = packages
+			end
+
 
 			if params[:service].present?
 				request_body[:shipment].merge!({:service => params[:service]})
