@@ -5,14 +5,16 @@ module Smailex
 
     def self.create(type, params=false)
       self.check_type(type)
-      if params
+      if type == "box"
         packages_array = params.map{|single_package|
           self.check_dimensions(single_package[:dimensions])
           self.check_units(single_package[:dimensions])
           single_package
         }
       else
-        package = {:package_type => "envelope"}
+        packages_array = params.map{|single_package|
+          single_package
+        }
       end
     end
 
