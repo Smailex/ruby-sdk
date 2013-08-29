@@ -10,7 +10,7 @@ module Smailex
 			unless  (params.keys & [:email, :name, :phone]).empty?
 				# We have full address for shipment
 				self.validate_phone_number(params[:phone])
-				self.validate_email(params[:email])
+				# self.validate_email(params[:email])
 
 				party = {
 					:email => params[:email],

@@ -45,6 +45,9 @@ class SmailexClient
     :payments =>{
       :get_cards => {:name => '/payment_cards', :method => :get},
       :get_default_card => {:name => '/payment_cards/default', :method => :get}
+    },
+    :party =>{
+      :validate => {:name => '/parties/validate', :method => :put}
     }
   }
 
@@ -153,13 +156,12 @@ class SmailexClient
     api_call(ENDPOINTS[:order][:purchase], false, {:id=>id,:authenticate=>true})
   end
 
-  
-
-  #######
+   #######
   #
   #  Cards
   #
   #######
+
   def get_cards
     api_call(ENDPOINTS[:payments][:get_cards],false,{:authenticate=>true})
   end
@@ -167,6 +169,23 @@ class SmailexClient
   def get_default_card
     api_call(ENDPOINTS[:payments][:get_default_card],false,{:authenticate=>true})
   end
+
+#######
+#
+#  Party
+#
+#######
+
+  def validate_party (params ={})
+    _party = Smailex::Party.create(params[:party])
+    service = Smailex::Service.create(params[:service])
+    _validate = {
+      :party => _party,
+      :service => service
+    }
+    api_call(ENDPOINTS[:party][:validate], _validate, {:authenticate => :true})
+  end
+
 
   #make a call to the SmaileX API
   def api_call(endpoint, request_body = false, params = false, access_token = false)

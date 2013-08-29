@@ -5,9 +5,12 @@ module Smailex
 
 		def self.create(params)
 			service = {
-				:carrier => params[:carrier].upcase,
-				:code => params[:code].upcase
+				:carrier => params[:carrier].upcase
 			}
+			unless params[:code].nil?
+				service[:code] = params[:code].upcase
+			end
+			service
 		end
 		
 	end
