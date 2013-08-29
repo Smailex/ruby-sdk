@@ -3,11 +3,11 @@ module Smailex
 	class Service
 		include Smailex::Error
 
-		def self.create(params)
+		def self.create(params, validation)
 			service = {
 				:carrier => params[:carrier].upcase
 			}
-			unless params[:code].nil?
+			unless validation
 				service[:code] = params[:code].upcase
 			end
 			service

@@ -176,13 +176,14 @@ class SmailexClient
 #
 #######
 
-  def validate_party (params ={})
-    _party = Smailex::Party.create(params[:party])
-    service = Smailex::Service.create(params[:service])
+  def validate_party (params ={}, validation=true)
+    _party = Smailex::Party.create(params[:party], validation)
+    service = Smailex::Service.create(params[:service], validation)
     _validate = {
       :party => _party,
       :service => service
     }
+    p "VALIDATE: #{_validate}"
     api_call(ENDPOINTS[:party][:validate], _validate, {:authenticate => :true})
   end
 
