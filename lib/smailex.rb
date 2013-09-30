@@ -16,11 +16,13 @@ require 'net/http'
 require 'net/https'
 require 'cgi'
 require 'open-uri'
+require 'oauth2'
+
 
 class SmailexClient
   #Smailex Live\Stage URLS
   #TODO Do not forget to change on real URLs
-  STAGE_API_URL = "https://localhost:3000/api/v1"
+  STAGE_API_URL = "http://localhost:3000/api/v1"
   LIVE_API_URL = "https://smailex.com/api/v1"
 
   #Smailex API`s endpoints
@@ -51,10 +53,18 @@ class SmailexClient
     }
   }
 
-  def initialize(_client_id, _client_secret, _use_stage = true)
+  def initialize(_client_id, _client_secret, _use_stage = true, username, password)
     @client_id = _client_id
     @client_secret = _client_secret
+    @username = username
+    @password = password
     @api_url = (_use_stage) ? STAGE_API_URL : LIVE_API_URL
+
+    #Get OAuth access token
+    client = OAuth2::Client.new(@api_url, @client_id,@client_secret)
+    client.token_path = "/api/v1/oauth/token"
+    auth_response = client.password.get_token(@username, @password)
+    @access_token = JSON.parse(auth_response.response.body)['access_token']
   end
 
   ## #######
@@ -71,31 +81,31 @@ class SmailexClient
     else
       throw "Unknown package type: #{type}"
     end
-       api_call(ENDPOINTS[:shipment][:create], shipment,{:authenticate=>true})
+       api_call(ENDPOINTS[:shipment][:create], shipment, access_token=@access_token)
   end 
 
   def get_rates(id)
-       api_call(ENDPOINTS[:shipment][:rates],false,{:id=>id, :authenticate=>true})
+       api_call(ENDPOINTS[:shipment][:rates],false,{:id=>id}, access_token=@access_token)
   end
 
   def get_shipment(id)
-    api_call(ENDPOINTS[:shipment][:show],false,{:id=>id, :authenticate=>true})
+    api_call(ENDPOINTS[:shipment][:show],false,{:id=>id}, access_token=@access_token)
   end
 
   def get_shipments_list
-    api_call(ENDPOINTS[:shipment][:list],false,{:authenticate => true})
+    api_call(ENDPOINTS[:shipment][:list],false,{}, access_token=@access_token)
   end
 
   def update_shipment(id, shipment_params={})
-    api_call(ENDPOINTS[:shipment][:update], shipment_params,{:id=>id})
+    api_call(ENDPOINTS[:shipment][:update], shipment_params,{:id=>id}, access_token=@access_token)
   end
 
   def validate_address(id)
-    api_call(ENDPOINTS[:shipment][:validate_addresses], {:shipment=>{}}, {:id=>id, :validate_addresses=>true})
+    api_call(ENDPOINTS[:shipment][:validate_addresses], {:shipment=>{}}, {:id=>id, :validate_addresses=>true}, access_token=@access_token)
   end
 
   def cancel_shipment(id)
-    api_call(ENDPOINTS[:shipment][:cancel], false, {:id=>id, :authenticate=>true})
+    api_call(ENDPOINTS[:shipment][:cancel], false, {:id=>id}, access_token=@access_token)
   end
 
   def get_label(id)
@@ -133,27 +143,27 @@ class SmailexClient
       user_order[:user_order].merge!({:payment_card_id => get_default_card['payment_card']['id']})
     end
 
-    api_call(ENDPOINTS[:order][:create],user_order,{:authenticate=>true})
+    api_call(ENDPOINTS[:order][:create],user_order,{}, access_token=@access_token)
   end
 
   def get_order(id)
-    api_call(ENDPOINTS[:order][:show],false,{:id=>id,:authenticate=>true})
+    api_call(ENDPOINTS[:order][:show],false,{:id=>id}, access_token=@access_token)
   end
 
   def book_order(id)
-    api_call(ENDPOINTS[:order][:book], false,{:id=>id, :authenticate=>true})
+    api_call(ENDPOINTS[:order][:book], false,{:id=>id}, access_token=@access_token)
   end
 
   def update_order(id, order_params={})
     user_order = Smailex::Order.create(order_params)
-    api_call(ENDPOINTS[:order][:update],user_order,{:id=>id,:authenticate=>true})
+    api_call(ENDPOINTS[:order][:update],user_order,{:id=>id}, access_token=@access_token)
   end
 
   def purchase(id)
     #Now we first book order, then purchase it.
     # book_order is now optional
-    api_call(ENDPOINTS[:order][:book], false, {:id=>id, :authenticate=>true})
-    api_call(ENDPOINTS[:order][:purchase], false, {:id=>id,:authenticate=>true})
+    api_call(ENDPOINTS[:order][:book], false, {:id=>id}, access_token=@access_token)
+    api_call(ENDPOINTS[:order][:purchase], false, {:id=>id}, access_token=@access_token)
   end
 
    #######
@@ -163,11 +173,11 @@ class SmailexClient
   #######
 
   def get_cards
-    api_call(ENDPOINTS[:payments][:get_cards],false,{:authenticate=>true})
+    api_call(ENDPOINTS[:payments][:get_cards],false,{}, access_token=@access_token)
   end
 
   def get_default_card
-    api_call(ENDPOINTS[:payments][:get_default_card],false,{:authenticate=>true})
+    api_call(ENDPOINTS[:payments][:get_default_card],false,{}, access_token=@access_token)
   end
 
 #######
@@ -184,7 +194,7 @@ class SmailexClient
       :service => service
     }
     p "VALIDATE: #{_validate}"
-    api_call(ENDPOINTS[:party][:validate], _validate, {:authenticate => :true})
+    api_call(ENDPOINTS[:party][:validate], _validate, {}, access_token=@access_token)
   end
 
 
@@ -219,7 +229,7 @@ class SmailexClient
     end
 
     if access_token
-      call.add_field('Authorization: Bearer', access_token);
+      call.add_field("Authorization" ,"Bearer #{access_token}" );
     end
 
     if params[:authenticate].present?
