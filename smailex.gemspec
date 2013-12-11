@@ -1,16 +1,16 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'smailex/version'
+require 'weship/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "smailex"
-  spec.version       = Smailex::VERSION
+  spec.name          = "weship"
+  spec.version       = Weship::VERSION
   spec.authors       = ["Roman Sotnikov"]
   spec.email         = ["roman.sotnikov@gmail.com"]
-  spec.description   = "Provide access to Smailex API"
-  spec.summary       = "Ruby bindings for smailex API"
-  spec.homepage      = "http://smailex.com"
+  spec.description   = "Provide access to weship(io) API"
+  spec.summary       = "Ruby bindings for weship(io) API"
+  spec.homepage      = "http://weship.io"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
