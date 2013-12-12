@@ -123,25 +123,25 @@ class WeshipClient
 #
 #######
 
-  def create_package_template(package_params)
+  def create_package(package_params)
     package = Weship::Package.create(package_params)
     api_call(ENDPOINTS[:package][:create], package, {}, access_token=@client_id)
   end
 
-  def get_package_templates_list
+  def get_packages_list
     api_call(ENDPOINTS[:package][:list], {}, {}, access_token = @client_id)
   end
 
-  def show_package_template(id)
+  def show_package(id)
     api_call(ENDPOINTS[:package][:show], {}, {:id=>id}, access_token=@client_id)
   end
 
-  def update_package_template(id, package_params)
+  def update_package(id, package_params)
     request_body = { :package => package_params}
     api_call(ENDPOINTS[:package][:update], request_body, {:id=>id}, access_token=@client_id)
   end
 
-  def delete_package_template(id)
+  def delete_package(id)
     api_call(ENDPOINTS[:package][:delete], {},{:id=>id}, access_token=@client_id)
   end
 
