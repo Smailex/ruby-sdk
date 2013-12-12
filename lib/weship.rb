@@ -16,7 +16,6 @@ require 'net/https'
 require 'cgi'
 require 'open-uri'
 
-
 class WeshipClient
   #Weship Live\Stage URLS
   #TODO Do not forget to change on real URLs
@@ -54,12 +53,9 @@ class WeshipClient
   end
 
   ## #######
-  #
   # Shipments
-  #
   #########
   def create_shipment(type, shipment_params ={})
-
     if type == "box"
       shipment = Weship::Shipment.create("box",shipment_params)
     elsif type == "envelope"
@@ -118,9 +114,7 @@ class WeshipClient
 
 
 #######
-#
 #  Packages
-#
 #######
 
   def create_package(package_params)
@@ -146,20 +140,13 @@ class WeshipClient
   end
 
 #######
-#
-#  Party
-#
+#  address
 #######
 
-  def validate_party (params ={}, validation=true)
-    _party = Weship::Party.create(params[:party], validation)
-    service = Weship::Service.create(params[:service], validation)
-    _validate = {
-      :party => _party,
-      :service => service
-    }
-    p "VALIDATE: #{_validate}"
-    api_call(ENDPOINTS[:party][:validate], _validate, {}, access_token=@access_token)
+  def validate_address (address_params, validate=true)
+    address = Weship::Party.create(address_params, validate=true)
+    p address
+    api_call(ENDPOINTS[:address][:validate], address, {}, access_token=@client_id)
   end
 
 

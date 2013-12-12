@@ -26,13 +26,8 @@
 }
 
 # packages
-{
-  :title => "My default",
-  :length=> 1,
-  :width=> 1,
-  :height=> 3
-}
-  
+{:title => "My default",:length=> 1,:width=> 1,:height=> 3}
+
 [
   {
     :title => "My default",

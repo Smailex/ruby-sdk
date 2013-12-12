@@ -3,7 +3,7 @@ module Weship
   class Party
     include Weship::Error
 
-    def self.create(params)
+    def self.create(params, validate=false)
       party = {
         :line1 => params[:line1].upcase,
         :city => params[:city].upcase,
@@ -30,7 +30,15 @@ module Weship
         party.merge!(:residential => params[:residential])
       end
 
-      party
+      if validate
+        request_body = {
+          :address => party
+        }
+        return request_body
+      else
+        return party
+      end #if
+
     end #create
   end #class
 end #module
