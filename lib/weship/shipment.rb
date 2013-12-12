@@ -6,11 +6,14 @@ module Weship
   class Shipment
     include Weship::Error
 
-    def self.create(type,params={})
-      if type == "box"
-        packages = Weship::Package.create(type,params[:packages])
+    def self.create(params={})
+      # create packages for shipment
+      if params[:package_type] == "box"
+        packages = Weship::Package.construct("box",params[:packages])
       end
 
+      
+      # create parties for shipment
       from_party, to_party = nil
 
       [:from, :to].each { |party_role|
@@ -23,29 +26,32 @@ module Weship
         end
       }
 
+      # create carrier
+      carrier = Weship::Carrier.create(params[:carrier])
+
+      #create request
       request_body = {
         :shipment => {
-          :package_type => type,
           :from=> from_party,
-          :to => to_party
+          :to => to_party,
+          :package_type => params[:package_type],
+          :carrier => carrier
         }
       } 
 
-      if type == "box"
+      #merge packages
+      if params[:package_type] == "box"
         request_body[:shipment][:packages] = packages
       end
 
 
-      if params[:service].present?
-        request_body[:shipment].merge!({:service => params[:service]})
-      end
-
-      if params[:signature_type].present?
-        request_body[:shipment][:signature_type] = params[:signature_type]
+      if params.has_key?(:options) && params[:options] != nil
+        options = Weship::Options.create(params[:options])
+        request_body[:shipment].merge!({:options => params[:options]})
       end
 
       request_body
 
-    end
+    end #create
   end
 end

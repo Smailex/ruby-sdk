@@ -57,39 +57,33 @@ class WeshipClient
   ## #######
   # Shipments
   #########
-  def create_shipment(type, shipment_params ={})
-    if type == "box"
-      shipment = Weship::Shipment.create("box",shipment_params)
-    elsif type == "envelope"
-      shipment = Weship::Shipment.create("envelope",shipment_params)
-    else
-      throw "Unknown package type: #{type}"
-    end
-       api_call(ENDPOINTS[:shipment][:create], shipment, {}, access_token=@access_token)
+  def create_shipment(shipment_params ={})
+      shipment = Weship::Shipment.create(shipment_params)
+      api_call(ENDPOINTS[:shipment][:create], shipment, {}, access_token=@client_id)
   end 
 
   def get_rates(id)
-       api_call(ENDPOINTS[:shipment][:rates],false,{:id=>id}, access_token=@access_token)
+       api_call(ENDPOINTS[:shipment][:rates],false,{:id=>id}, access_token=@client_id)
   end
 
   def get_shipment(id)
-    api_call(ENDPOINTS[:shipment][:show],false,{:id=>id}, access_token=@access_token)
+    api_call(ENDPOINTS[:shipment][:show],false,{:id=>id}, access_token=@client_id)
   end
 
   def get_shipments_list
-    api_call(ENDPOINTS[:shipment][:list],false,{}, access_token=@access_token)
+    api_call(ENDPOINTS[:shipment][:list],false,{}, access_token=@client_id)
   end
 
   def update_shipment(id, shipment_params={})
-    api_call(ENDPOINTS[:shipment][:update], shipment_params,{:id=>id}, access_token=@access_token)
+    api_call(ENDPOINTS[:shipment][:update], shipment_params,{:id=>id}, access_token=@client_id)
   end
 
   def validate_address(id)
-    api_call(ENDPOINTS[:shipment][:validate_addresses], {:shipment=>{}}, {:id=>id, :validate_addresses=>true}, access_token=@access_token)
+    api_call(ENDPOINTS[:shipment][:validate_addresses], {:shipment=>{}}, {:id=>id, :validate_addresses=>true}, access_token=@client_id)
   end
 
   def cancel_shipment(id)
-    api_call(ENDPOINTS[:shipment][:cancel], false, {:id=>id}, access_token=@access_token)
+    api_call(ENDPOINTS[:shipment][:cancel], false, {:id=>id}, access_token=@client_id)
   end
 
   def get_label(id)

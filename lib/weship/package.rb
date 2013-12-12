@@ -41,7 +41,7 @@ module Weship
         :tracking_number => params[:tracking_number]
       }
       tracking
-    end#tracking
+    end#track
 
   end #class
 end #module
