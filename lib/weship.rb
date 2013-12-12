@@ -42,7 +42,9 @@ class WeshipClient
       :update => {:name => '/packages/:id', :method => :put},
       :list => {:name => '/packages', :method => :get},
       :show => {:name => '/packages/:id', :method => :get},
-      :delete => {:name => '/packages/:id', :method => :delete}
+      :delete => {:name => '/packages/:id', :method => :delete},
+      :track => {:name => '/track', :method => :post}
+
     }
   }
 
@@ -139,6 +141,11 @@ class WeshipClient
     api_call(ENDPOINTS[:package][:delete], {},{:id=>id}, access_token=@client_id)
   end
 
+  def track_package(tracking_params)
+    tracking = Weship::Package.track(tracking_params)
+    api_call(ENDPOINTS[:package][:track], tracking, {}, api_call = @client_id)
+  end
+
 #######
 #  address
 #######
@@ -148,6 +155,8 @@ class WeshipClient
     p address
     api_call(ENDPOINTS[:address][:validate], address, {}, access_token=@client_id)
   end
+
+
 
 
   #make a call to the Weship API

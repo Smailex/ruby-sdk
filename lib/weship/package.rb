@@ -23,7 +23,7 @@ module Weship
       request_body
     end #create
 
-    def construct(type, params=false)
+    def self.construct(type, params=false)
      if type == "envelope"
         packages_array = params.map{|single_package|
           single_package
@@ -33,7 +33,15 @@ module Weship
           single_package
         }
       end #if
-
     end #construct
+
+    def self.track(params)
+      tracking = {
+        :carrier => params[:carrier],
+        :tracking_number => params[:tracking_number]
+      }
+      tracking
+    end#tracking
+
   end #class
 end #module
