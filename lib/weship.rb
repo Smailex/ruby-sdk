@@ -38,7 +38,7 @@ class WeshipClient
     :address =>{
       :validate => {:name => '/validate', :method => :post}
     },
-    :packages => {
+    :package => {
       :create => {:name => '/packages', :method => :post},
       :update => {:name => '/packages/:id', :method => :put},
       :list => {:name => '/packages', :method => :get},
@@ -47,7 +47,8 @@ class WeshipClient
     }
   }
 
-  def initialize(_client_id, _use_stage = true)
+  def initialize(_client_id = false, _use_stage = true)
+    _client_id = '38ddd2ddee5e8e3aa5ccae5471af1da64cbb6d7f36939cdf7d2fd754f7820347'
     @client_id = _client_id
     @api_url = (_use_stage) ? STAGE_API_URL : LIVE_API_URL
   end
@@ -122,9 +123,26 @@ class WeshipClient
 #
 #######
 
-  def create_package_template(params)
-    package = Weship::Package.create(params)
-    api_call(ENDPOINTS[:package][:create], package, {}, access_token=@access_token)
+  def create_package_template(package_params)
+    package = Weship::Package.create(package_params)
+    api_call(ENDPOINTS[:package][:create], package, {}, access_token=@client_id)
+  end
+
+  def get_package_templates_list
+    api_call(ENDPOINTS[:package][:list], {}, {}, access_token = @client_id)
+  end
+
+  def show_package_template(id)
+    api_call(ENDPOINTS[:package][:show], {}, {:id=>id}, access_token=@client_id)
+  end
+
+  def update_package_template(id, package_params)
+    request_body = { :package => package_params}
+    api_call(ENDPOINTS[:package][:update], request_body, {:id=>id}, access_token=@client_id)
+  end
+
+  def delete_package_template(id)
+    api_call(ENDPOINTS[:package][:delete], {},{:id=>id}, access_token=@client_id)
   end
 
 #######
@@ -153,10 +171,6 @@ class WeshipClient
 
     url = URI.parse(@api_url + endpoint_string)
 
-    if params[:validate_addresses].present?
-      url =  URI.parse(@api_url + endpoint_string + "?validate_addresses=true")
-    end
-    
     # construct the call data and access token
     call = case endpoint[:method]
     when :post
@@ -179,13 +193,8 @@ class WeshipClient
       call.add_field("Authorization" ,"Token token=#{access_token}" );
     end
 
-    if params[:authenticate].present?
-      call.basic_auth @client_id, @client_secret
-    end
-
     # create the request object
     request = Net::HTTP.new(url.host, url.port)
-    
 
     request.read_timeout = 30
     # request.use_ssl = true
