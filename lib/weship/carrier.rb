@@ -3,6 +3,8 @@ module Weship
   class Carrier
     include Weship::Error
 
+    # used for create carrier object in shipment construction
+    # see https://weship.io/#docs section `shipments'
     def self.create(params)
       carrier = {
         :name => params[:name].upcase,
@@ -11,7 +13,7 @@ module Weship
       }
       
       carrier
-    end
+    end #carrier
     
-  end
-end
+  end #class
+end #module

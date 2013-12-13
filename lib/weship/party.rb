@@ -3,6 +3,8 @@ module Weship
   class Party
     include Weship::Error
 
+    # used for create party (from, to) objects in shipment construction
+    # see https://weship.io/#docs section `shipments'
     def self.create(params, validate=false)
       party = {
         :line1 => params[:line1].upcase,
@@ -30,6 +32,8 @@ module Weship
         party.merge!(:residential => params[:residential])
       end
 
+      # if that parameter present we'll just validate party address
+      # see https://weship.io/#docs section `addresses'
       if validate
         request_body = {
           :address => party

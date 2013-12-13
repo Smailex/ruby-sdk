@@ -3,6 +3,9 @@ module Weship
   class Options
     include Weship::Error
 
+    # used for create options object in shipment construction
+    # see https://weship.io/#docs section `shipments'
+
     def self.create(params)
       # options is not required by default
       options = {}
@@ -30,6 +33,11 @@ module Weship
       # merge remarks parameter if present. Parameter is not required and may be not present by default
       if params.has_key?(:remarks) && params[:remarks] != nil
         options.merge!(:remarks => params[:remarks])
+      end
+
+      # merge address validation parameter if present. Parameter is not required and may be not present by default
+      if params.has_key?(:validate_addresses) && params[:validate_addresses] !=nil
+        options.merge!(:validate_addresses => params[:validate_addresses])
       end
 
       options

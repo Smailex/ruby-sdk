@@ -44,7 +44,7 @@ module Weship
         request_body[:shipment][:packages] = packages
       end
 
-
+      # merge options
       if params.has_key?(:options) && params[:options] != nil
         options = Weship::Options.create(params[:options])
         request_body[:shipment].merge!({:options => params[:options]})
