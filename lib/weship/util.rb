@@ -9,8 +9,4 @@ module Weship
 		NO_SHIPMENT_ID_PRESENT = "ERR: Shipment ID can't be null.\n"
 		PARAMS_NIL_ERR = "parameters couldn't be nil.\n"
 	end
-	module Config
-		WESHIP_API_URL = "http://localhost:3000/api/v1/"
-		WESHIP_API_KEY = "aaa"
-	end
 end
