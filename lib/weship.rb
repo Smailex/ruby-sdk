@@ -5,6 +5,7 @@ require 'weship/package'
 require 'weship/party'
 require 'weship/carrier'
 require 'weship/options'
+require 'weship/rate'
 require 'weship/util'
 
 #require needed gems
@@ -28,11 +29,11 @@ class WeshipClient
       :create => {:name => '/shipments', :method => :post},
       :show   => {:name => '/shipments/:id', :method => :get},
       :list   => {:name => '/shipments', :method => :get},
-      :rates  => {:name => '/shipments/:id/rates', :method => :get},
       :update => { :name => '/shipments/:id', :method => :put},
       :cancel => {:name => '/shipments/:id', :method => :delete},
       :buy => {:name => '/shipments/:id/buy', :method => :put},
-      :purchase => {:name => '/shipments/purchase', :method => :post}
+      :purchase => {:name => '/shipments/purchase', :method => :post},
+      :rates=>{:name=>'/shipments/rates', :method => :post}
     },
     :address =>{
       :validate => {:name => '/validate', :method => :post}
@@ -107,7 +108,14 @@ class WeshipClient
     File.open("#{path}#{id}.pdf", "wb"){ |file| file.write label_data  }
 
   end
+#######
+#  Rates
+#######
 
+def get_rates(params)
+  rates = Weship::Rate.get(params)
+  api_call(ENDPOINTS[:shipment][:rates], rates, {}, access_token = @client_id)
+end
 
 #######
 #  Packages
