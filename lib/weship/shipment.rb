@@ -9,10 +9,9 @@ module Weship
     def self.create(params={})
       # create packages for shipment
       if params[:package_type] == "box"
-        packages = Weship::Package.construct("box",params[:packages])
+        packages = Weship::Package.construct(params[:packages])
       end
 
-      
       # create parties for shipment
       from_party, to_party = nil
 
