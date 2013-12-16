@@ -20,7 +20,7 @@ require 'open-uri'
 class WeshipClient
   #Weship Live\Stage URLS
   #TODO Do not forget to change on real URLs
-  STAGE_API_URL = "http://localhost:3000/api/v1"
+  STAGE_API_URL = "https://stage.weship.io/api/v1"
   LIVE_API_URL = "https://weship.io/api/v1"
 
   #Weship API`s endpoints
@@ -50,7 +50,6 @@ class WeshipClient
   }
 
   def initialize(_client_id = false, _use_stage = true)
-    _client_id = '38ddd2ddee5e8e3aa5ccae5471af1da64cbb6d7f36939cdf7d2fd754f7820347'
     @client_id = _client_id
     @api_url = (_use_stage) ? STAGE_API_URL : LIVE_API_URL
   end
